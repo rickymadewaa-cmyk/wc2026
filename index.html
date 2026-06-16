@@ -196,6 +196,8 @@ main{padding:10px 14px 80px}
   <span class="tz-badge">All times WIB (UTC+7)</span>
 </header>
 
+
+<div id="liveBar" style="font-size:10px;text-align:center;padding:3px 0;background:var(--surface);border-bottom:1px solid var(--border);color:var(--muted)">&#9203; Fetching live data...</div>
 <div class="stats-bar">
   <div class="stat-item"><div class="stat-value" id="statPlayed">15</div><div class="stat-label">Played</div></div>
   <div class="stat-item"><div class="stat-value" id="statGoals">40</div><div class="stat-label">Goals</div></div>
@@ -230,6 +232,74 @@ main{padding:10px 14px 80px}
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
+var API_KEY  = '2e7112f166b247a4ad4ddbdcf9df313f';
+var API_BASE = 'https://api.football-data.org/v4';
+var WC_ID    = 2000;
+var REFRESH_SECS = 60;
+function apiFetch(path) {
+  return fetch(API_BASE+path,{headers:{'X-Auth-Token':API_KEY}})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
+}
+function mapStatus(s){
+  if(s==='FINISHED')return 'completed';
+  if(s==='IN_PLAY'||s==='PAUSED'||s==='HALFTIME')return 'live';
+  return 'upcoming';
+}
+function toWIBTime(u){
+  var d=new Date(u),w=new Date(d.getTime()+7*3600000),p=function(n){return n<10?'0'+n:''+n;};
+  return {date:w.toISOString().slice(0,10),time:p(w.getUTCHours())+':'+p(w.getUTCMinutes())};
+}
+var AFLAGS={'france':'🇫🇷','spain':'🇪🇸','argentina':'🇦🇷','england':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','portugal':'🇵🇹','brazil':'🇧🇷','netherlands':'🇳🇱','morocco':'🇲🇦','belgium':'🇧🇪','germany':'🇩🇪','croatia':'🇭🇷','colombia':'🇨🇴','senegal':'🇸🇳','mexico':'🇲🇽','united states':'🇺🇸','usa':'🇺🇸','uruguay':'🇺🇾','japan':'🇯🇵','switzerland':'🇨🇭','south korea':'🇰🇷','korea republic':'🇰🇷','australia':'🇦🇺','ecuador':'🇪🇨','norway':'🇳🇴','sweden':'🇸🇪','canada':'🇨🇦','scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','iran':'🇮🇷','ivory coast':'🇨🇮',"cote d'ivoire":'🇨🇮','austria':'🇦🇹','saudi arabia':'🇸🇦','turkey':'🇹🇷','algeria':'🇩🇿','ghana':'🇬🇭','egypt':'🇪🇬','czechia':'🇨🇿','czech republic':'🇨🇿','bosnia and herzegovina':'🇧🇦','dr congo':'🇨🇩','iraq':'🇮🇶','south africa':'🇿🇦','paraguay':'🇵🇾','uzbekistan':'🇺🇿','panama':'🇵🇦','haiti':'🇭🇹','cape verde':'🇨🇻','jordan':'🇯🇴','qatar':'🇶🇦','tunisia':'🇹🇳','new zealand':'🇳🇿','curacao':'🇨🇼'};
+function gf(n){return n?(AFLAGS[n.toLowerCase()]||'🏳️'):'🏳️';}
+function mergeM(sm,am){
+  var w=toWIBTime(am.utcDate);sm.wibDate=w.date;sm.wibTime=w.time;sm.status=mapStatus(am.status);
+  var ft=am.score&&am.score.fullTime,ht=am.score&&am.score.halfTime;
+  if(sm.status==='completed'&&ft){sm.homeScore=ft.home;sm.awayScore=ft.away;}
+  else if(sm.status==='live'&&ht){sm.homeScore=ht.home;sm.awayScore=ht.away;}
+  else{sm.homeScore=null;sm.awayScore=null;}
+  if(sm.status==='completed'&&sm.homeScore!==null){
+    sm.winner=sm.homeScore>sm.awayScore?'home':sm.awayScore>sm.homeScore?'away':'draw';
+  } else {sm.winner=null;}
+}
+function fetchScores(){
+  return apiFetch('/competitions/'+WC_ID+'/matches?stage=GROUP_STAGE').then(function(d){
+    if(d.matches)d.matches.forEach(function(am,i){if(matches[i])mergeM(matches[i],am);});
+  });
+}
+function fetchStandingsAPI(){
+  return apiFetch('/competitions/'+WC_ID+'/standings').then(function(d){
+    if(!d.standings)return;
+    d.standings.forEach(function(st){
+      var g=(st.group||'').replace('GROUP_','').replace('Group ','').trim();
+      if(!g||!standingsData[g])return;
+      standingsData[g]=st.table.map(function(r){
+        return{team:r.team.shortName||r.team.name,flag:gf(r.team.name),rank:0,
+          gp:r.playedGames,w:r.won,d:r.draw,l:r.lost,gf:r.goalsFor,ga:r.goalsAgainst,gd:r.goalDifference,pts:r.points};
+      });
+    });
+  });
+}
+function fetchScorersAPI(){
+  return apiFetch('/competitions/'+WC_ID+'/scorers?limit=30').then(function(d){
+    if(!d.scorers||!d.scorers.length)return;
+    topScorers.length=0;
+    d.scorers.forEach(function(s){topScorers.push({name:s.player.name,team:s.team.shortName||s.team.name,flag:gf(s.team.name),goals:s.goals||0,assists:s.assists||0});});
+  });
+}
+function setLiveBar(ok){
+  var b=document.getElementById('liveBar');if(!b)return;
+  var now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+  b.textContent=ok?('🟢 Live · '+now+' WIB'):'🔴 Offline — showing cached data';
+  b.style.color=ok?'var(--green)':'var(--red)';
+}
+function refreshAll(){
+  Promise.all([
+    fetchScores().catch(function(e){console.warn(e);}),
+    fetchStandingsAPI().catch(function(e){console.warn(e);}),
+    fetchScorersAPI().catch(function(e){console.warn(e);}),
+  ]).then(function(){setLiveBar(true);render();}).catch(function(){setLiveBar(false);});
+}
+
 // ─── MATCH DATA ───────────────────────────────────────────────────────────────
 const matches = [
   { id:1,  group:'A', home:'Mexico',       homeFlag:'🇲🇽', away:'South Africa',      awayFlag:'🇿🇦', wibDate:'2026-06-12', wibTime:'02:00', venue:'Mexico City',       venueFlag:'🇲🇽', status:'completed', homeScore:2, awayScore:0, winner:'home', homeRank:15, awayRank:60, weather:'⛅ Partly Cloudy', tempC:17, stats:{homePoss:52,awayPoss:48,homeShots:14,awayShots:9,homeShotsOT:5,awayShotsOT:3,homeXG:1.8,awayXG:0.6}, prob:{home:55,draw:25,away:20}, homeScorers:[{name:'Quinones',min:34},{name:'Jimenez',min:78}], awayScorers:[] },
@@ -833,11 +903,12 @@ function renderBracket() {
 
 
 // ─── UPDATE MAIN RENDER ───────────────────────────────────────────────────────
-window.addEventListener('scroll', () => {
+window.addEventListener('scroll', function() {
   document.getElementById('scrollTopBtn').classList.toggle('visible', window.scrollY > 300);
 });
-
 render();
+refreshAll();
+setInterval(refreshAll, REFRESH_SECS * 1000);
 </script>
 </body>
 </html>
