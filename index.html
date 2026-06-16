@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+:root {
+  --bg:#0a0e1a; --surface:#131929; --card:#1a2235; --border:#252f45;
+  --accent:#c8a84b; --accent2:#e8c96b; --green:#2ecc71; --red:#e74c3c;
+  --blue:#3498db; --text:#e8ecf4; --muted:#7a8aaa; --pill:#252f45;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0a0e1a,#131929);border-bottom:1px solid var(--border);padding:16px 16px 12px;text-align:center;position:sticky;top:0;z-index:100}
+.header-trophy{font-size:24px;line-height:1;margin-bottom:3px}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);line-height:1}
+header p{color:var(--muted);font-size:10px;margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.tz-badge{display:inline-block;background:var(--accent);color:#0a0e1a;font-weight:700;font-size:10px;padding:2px 8px;border-radius:20px;margin-top:4px;letter-spacing:1px}
+
+/* STATS BAR */
+.stats-bar{display:flex;padding:8px 16px;gap:8px;background:var(--surface);border-bottom:1px solid var(--border)}
+.stat-item{display:flex;flex-direction:column;align-items:center;flex:1}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);line-height:1}
+.stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+
+/* NAV TABS */
+.nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:600;color:var(--muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;letter-spacing:.3px;transition:all .2s}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* SUB FILTERS */
+.sub-filters{padding:8px 12px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border);background:var(--surface)}
+.sub-filters::-webkit-scrollbar{display:none}
+.filter-btn{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0e1a}
+
+/* MAIN */
+main{padding:10px 14px 80px}
+
+/* DAY */
+.day-section{margin-bottom:18px}
+.day-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.day-label{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);letter-spacing:1px}
+.day-date{font-size:10px;color:var(--muted);background:var(--pill);padding:2px 7px;border-radius:10px}
+.day-count{margin-left:auto;font-size:10px;color:var(--muted)}
+
+/* MATCH CARD */
+.match-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.match-card.completed{border-left:3px solid var(--green)}
+.match-card.live{border-left:3px solid var(--red)}
+
+.match-top{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);gap:4px}
+.match-group-badge{font-size:9px;font-weight:700;color:var(--accent);background:rgba(200,168,75,.15);padding:2px 7px;border-radius:10px;letter-spacing:1px;flex-shrink:0}
+.match-time-wib{font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
+.match-status{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;flex-shrink:0}
+.status-upcoming{background:rgba(122,138,170,.15);color:var(--muted)}
+.status-completed{background:rgba(46,204,113,.15);color:var(--green)}
+.status-live{background:rgba(231,76,60,.2);color:var(--red)}
+
+.match-body{padding:10px;display:flex;align-items:center;gap:6px}
+.team{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.team-flag{font-size:26px;line-height:1}
+.team-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.2}
+.team-name.winner{color:var(--accent2)}
+.rank-badge{font-size:9px;color:var(--muted);background:var(--pill);padding:1px 5px;border-radius:5px;font-weight:600}
+.score-area{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:60px}
+.score{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--text);letter-spacing:3px;line-height:1}
+.score-vs{font-size:10px;color:var(--muted);font-weight:600}
+
+.match-bottom{padding:4px 10px 6px;display:flex;align-items:center;gap:4px;border-top:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
+.venue-text{font-size:9px;color:var(--muted);flex:1}
+.weather-badge{font-size:10px;color:var(--accent2)}
+.upset-tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(231,76,60,.2);color:var(--red);letter-spacing:.3px}
+.big-upset-tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(231,76,60,.35);color:#ff6b6b;letter-spacing:.3px}
+
+/* SCORERS LINE */
+.scorers-line{padding:4px 10px 6px;font-size:10px;color:var(--muted);border-top:1px solid rgba(255,255,255,.04);line-height:1.5}
+.scorer-home{color:#c8a84b}
+.scorer-away{color:#3498db}
+
+/* EXPAND TOGGLE */
+.expand-toggle{width:100%;padding:6px 10px;background:rgba(200,168,75,.06);border:none;border-top:1px solid var(--border);color:var(--accent);font-size:10px;font-weight:600;cursor:pointer;text-align:center;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s}
+.expand-toggle:hover{background:rgba(200,168,75,.12)}
+.expand-arrow{transition:transform .3s;display:inline-block;font-size:9px}
+.expand-arrow.open{transform:rotate(180deg)}
+.details-panel{display:none;padding:10px;border-top:1px solid var(--border);background:rgba(0,0,0,.2)}
+.details-panel.open{display:block}
+
+/* STATS */
+.stat-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;font-size:10px}
+.stat-val-l{color:var(--accent2);font-weight:700;min-width:26px;text-align:right;font-size:11px}
+.stat-val-r{color:#3498db;font-weight:700;min-width:26px;text-align:left;font-size:11px}
+.stat-name{color:var(--muted);text-align:center;flex:1;font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+.stat-bar-wrap{flex:2;display:flex;height:3px;border-radius:3px;overflow:hidden;background:var(--border)}
+.stat-bar-home{background:var(--accent);height:100%}
+.stat-bar-away{background:#3498db;height:100%}
+.stats-title{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.stats-legend{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:8px}
+.stats-legend span{display:flex;align-items:center;gap:3px}
+.legend-color{width:8px;height:3px;border-radius:2px}
+
+/* PROB BAR */
+.prob-section{margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.prob-title{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.prob-bar-wrap{display:flex;height:18px;border-radius:5px;overflow:hidden}
+.prob-home{background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0e1a}
+.prob-draw{background:var(--muted);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--bg)}
+.prob-away{background:#3498db;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
+.prob-labels{display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--muted)}
+
+/* SECTION DIVIDER */
+.section-divider{display:flex;align-items:center;gap:6px;margin:12px 0 6px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* STANDINGS */
+.standings-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px}
+.standings-table th{padding:5px 6px;text-align:left;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--surface)}
+.standings-table td{padding:6px;border-bottom:1px solid rgba(255,255,255,.04)}
+.standings-table tr:last-child td{border-bottom:none}
+.standings-table tr.qualify-direct td{background:rgba(46,204,113,.06)}
+.standings-table tr.qualify-3rd td{background:rgba(52,152,219,.06)}
+.standings-table .team-cell{display:flex;align-items:center;gap:6px}
+.standings-table .team-flag-sm{font-size:16px}
+.standings-table .team-name-sm{font-size:11px;font-weight:600}
+.qualify-badge{font-size:8px;padding:1px 5px;border-radius:4px;font-weight:700;letter-spacing:.3px;margin-left:4px}
+.q-direct{background:rgba(46,204,113,.2);color:var(--green)}
+.q-3rd{background:rgba(52,152,219,.2);color:var(--blue)}
+.q-out{background:rgba(231,76,60,.1);color:var(--muted)}
+.standings-legend{display:flex;gap:10px;font-size:9px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+.standings-legend span{display:flex;align-items:center;gap:4px}
+.legend-sq{width:8px;height:8px;border-radius:2px}
+.group-tabs-standing{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px}
+.group-tabs-standing::-webkit-scrollbar{display:none}
+.g-tab{flex-shrink:0;padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.g-tab.active{background:var(--accent);border-color:var(--accent);color:#0a0e1a}
+
+/* LEADERBOARD */
+.leaderboard-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;padding:10px;display:flex;align-items:center;gap:10px}
+.lb-rank{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);min-width:28px;text-align:center;line-height:1}
+.lb-rank.gold{color:#ffd700}
+.lb-rank.silver{color:#c0c0c0}
+.lb-rank.bronze{color:#cd7f32}
+.lb-info{flex:1}
+.lb-name{font-size:13px;font-weight:700;color:var(--text)}
+.lb-team{font-size:10px;color:var(--muted);margin-top:1px}
+.lb-count{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent2);line-height:1;text-align:right}
+.lb-count-label{font-size:9px;color:var(--muted);text-align:right;text-transform:uppercase}
+.lb-section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+
+/* BRACKET */
+.bracket-stage { margin-bottom: 24px; }
+.bracket-stage-title { font-family: "Bebas Neue", sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+.bracket-stage-dates { font-size: 10px; color: var(--muted); font-family: "Inter", sans-serif; font-weight: 400; letter-spacing: 0; }
+.bracket-match { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.bracket-match.completed { border-left: 3px solid var(--green); }
+.bracket-match.upcoming { border-left: 3px solid var(--border); }
+.bracket-match-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 10px; background: rgba(255,255,255,.03); border-bottom: 1px solid var(--border); font-size: 9px; color: var(--muted); }
+.bracket-match-num { font-weight: 700; color: var(--accent); }
+.bracket-teams { display: flex; flex-direction: column; }
+.bracket-team { display: flex; align-items: center; gap: 8px; padding: 8px 10px; }
+.bracket-team:first-child { border-bottom: 1px solid rgba(255,255,255,.04); }
+.bracket-team-flag { font-size: 18px; line-height: 1; }
+.bracket-team-name { flex: 1; font-size: 12px; font-weight: 600; color: var(--text); }
+.bracket-team-name.tbd { color: var(--muted); font-style: italic; font-weight: 400; }
+.bracket-team-name.winner { color: var(--accent2); }
+.bracket-team-score { font-family: "Bebas Neue", sans-serif; font-size: 20px; color: var(--text); min-width: 20px; text-align: right; }
+.bracket-team-score.winner { color: var(--accent2); }
+.bracket-info { padding: 4px 10px 6px; font-size: 9px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
+.bracket-note { background: rgba(200,168,75,.08); border: 1px solid rgba(200,168,75,.2); border-radius: 8px; padding: 8px 10px; font-size: 10px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.bracket-note b { color: var(--accent); }
+
+/* SCROLL TOP */
+.scroll-top{position:fixed;bottom:20px;right:14px;width:38px;height:38px;border-radius:50%;background:var(--accent);color:#0a0e1a;border:none;font-size:16px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 14px rgba(200,168,75,.4)}
+.scroll-top.visible{display:flex}
+
+/* LEGEND */
+.legend{display:flex;gap:12px;padding:6px 14px;background:var(--surface);border-top:1px solid var(--border);font-size:9px;color:var(--muted);flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:3px}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.no-results{text-align:center;padding:28px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-trophy">⚽🏆</div>
+  <h1>FIFA World Cup 2026</h1>
+  <p>Group Stage</p>
+  <span class="tz-badge">All times WIB (UTC+7)</span>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-value" id="statPlayed">15</div><div class="stat-label">Played</div></div>
+  <div class="stat-item"><div class="stat-value" id="statGoals">40</div><div class="stat-label">Goals</div></div>
+  <div class="stat-item"><div class="stat-value">57</div><div class="stat-label">Remaining</div></div>
+  <div class="stat-item"><div class="stat-value">12</div><div class="stat-label">Groups</div></div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="setTab('schedule',this)">📅 Schedule</button>
+  <button class="nav-tab" onclick="setTab('standings',this)">🏅 Standings</button>
+  <button class="nav-tab" onclick="setTab('scorers',this)">⚽ Scorers</button>
+  <button class="nav-tab" onclick="setTab('assists',this)">🎯 Assists</button>
+  <button class="nav-tab" onclick="setTab('bracket',this)">🏆 Bracket</button>
+</div>
+
+<div id="subFiltersBar" class="sub-filters">
+  <button class="filter-btn active" onclick="setView('all',this)">All Matches</button>
+  <button class="filter-btn" onclick="setView('completed',this)">Results</button>
+  <button class="filter-btn" onclick="setView('upcoming',this)">Upcoming</button>
+  <button class="filter-btn" onclick="setView('group',this)">By Group</button>
+</div>
+
+<main id="mainContent"></main>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Completed</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Live</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Upcoming</div>
+  <div class="legend-item" style="margin-left:auto">⚑ Winner in gold</div>
+</div>
+
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ─── MATCH DATA ───────────────────────────────────────────────────────────────
+const matches = [
+  { id:1,  group:'A', home:'Mexico',       homeFlag:'🇲🇽', away:'South Africa',      awayFlag:'🇿🇦', wibDate:'2026-06-12', wibTime:'02:00', venue:'Mexico City',       venueFlag:'🇲🇽', status:'completed', homeScore:2, awayScore:0, winner:'home', homeRank:15, awayRank:60, weather:'⛅ Partly Cloudy', tempC:17, stats:{homePoss:52,awayPoss:48,homeShots:14,awayShots:9,homeShotsOT:5,awayShotsOT:3,homeXG:1.8,awayXG:0.6}, prob:{home:55,draw:25,away:20}, homeScorers:[{name:'Quinones',min:34},{name:'Jimenez',min:78}], awayScorers:[] },
+  { id:2,  group:'A', home:'South Korea',  homeFlag:'🇰🇷', away:'Czechia',           awayFlag:'🇨🇿', wibDate:'2026-06-12', wibTime:'09:00', venue:'Guadalajara',       venueFlag:'🇲🇽', status:'completed', homeScore:2, awayScore:1, winner:'home', homeRank:23, awayRank:48, weather:'🌦️ Chance Rain', tempC:22, stats:{homePoss:58,awayPoss:42,homeShots:16,awayShots:8,homeShotsOT:6,awayShotsOT:3,homeXG:2.1,awayXG:0.9}, prob:{home:52,draw:26,away:22}, homeScorers:[{name:'Hwang',min:22},{name:'Oh',min:61}], awayScorers:[{name:'Krejci',min:45}] },
+  { id:3,  group:'B', home:'Canada',       homeFlag:'🇨🇦', away:'Bosnia & Herz.',    awayFlag:'🇧🇦', wibDate:'2026-06-13', wibTime:'02:00', venue:'Toronto',           venueFlag:'🇨🇦', status:'completed', homeScore:1, awayScore:1, winner:'draw', homeRank:30, awayRank:50, weather:'⛅ Partly Cloudy', tempC:21, stats:{homePoss:54,awayPoss:46,homeShots:12,awayShots:11,homeShotsOT:4,awayShotsOT:4,homeXG:1.4,awayXG:1.2}, prob:{home:52,draw:26,away:22}, homeScorers:[{name:'Larin',min:12}], awayScorers:[{name:'Lukic',min:55}] },
+  { id:4,  group:'D', home:'USA',          homeFlag:'🇺🇸', away:'Paraguay',          awayFlag:'🇵🇾', wibDate:'2026-06-13', wibTime:'08:00', venue:'Los Angeles',       venueFlag:'🇺🇸', status:'completed', homeScore:4, awayScore:1, winner:'home', homeRank:16, awayRank:64, weather:'☀️ Sunny', tempC:24, stats:{homePoss:61,awayPoss:39,homeShots:18,awayShots:7,homeShotsOT:8,awayShotsOT:2,homeXG:3.1,awayXG:0.7}, prob:{home:65,draw:20,away:15}, homeScorers:[{name:'Balogun',min:23},{name:'Reyna',min:38},{name:'Balogun',min:41},{name:'Adams',min:73}], awayScorers:[{name:'Mauricio',min:58}] },
+  { id:5,  group:'B', home:'Qatar',        homeFlag:'🇶🇦', away:'Switzerland',       awayFlag:'🇨🇭', wibDate:'2026-06-14', wibTime:'02:00', venue:'Santa Clara',       venueFlag:'🇺🇸', status:'completed', homeScore:1, awayScore:1, winner:'draw', homeRank:38, awayRank:19, weather:'🌥️ Cloudy', tempC:18, stats:{homePoss:44,awayPoss:56,homeShots:10,awayShots:13,homeShotsOT:3,awayShotsOT:5,homeXG:0.9,awayXG:1.3}, prob:{home:28,draw:28,away:44}, homeScorers:[{name:'Khoukhi',min:89}], awayScorers:[{name:'Embolo',min:12}] },
+  { id:6,  group:'C', home:'Brazil',       homeFlag:'🇧🇷', away:'Morocco',           awayFlag:'🇲🇦', wibDate:'2026-06-14', wibTime:'05:00', venue:'East Rutherford',   venueFlag:'🇺🇸', status:'completed', homeScore:1, awayScore:1, winner:'draw', homeRank:6,  awayRank:8,  weather:'⛅ Partly Cloudy', tempC:25, stats:{homePoss:55,awayPoss:45,homeShots:15,awayShots:10,homeShotsOT:5,awayShotsOT:4,homeXG:1.7,awayXG:1.4}, prob:{home:52,draw:28,away:20}, homeScorers:[{name:'Vinicius Jr',min:40}], awayScorers:[{name:'Saibari',min:21}] },
+  { id:7,  group:'C', home:'Haiti',        homeFlag:'🇭🇹', away:'Scotland',          awayFlag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', wibDate:'2026-06-14', wibTime:'08:00', venue:'Foxborough',        venueFlag:'🇺🇸', status:'completed', homeScore:0, awayScore:1, winner:'away', homeRank:83, awayRank:33, weather:'⛅ Partly Cloudy', tempC:22, stats:{homePoss:38,awayPoss:62,homeShots:7,awayShots:17,homeShotsOT:2,awayShotsOT:6,homeXG:0.4,awayXG:1.6}, prob:{home:18,draw:24,away:58}, homeScorers:[], awayScorers:[{name:'McGinn',min:28}] },
+  { id:8,  group:'D', home:'Australia',    homeFlag:'🇦🇺', away:'Türkiye',           awayFlag:'🇹🇷', wibDate:'2026-06-14', wibTime:'11:00', venue:'Vancouver',         venueFlag:'🇨🇦', status:'completed', homeScore:2, awayScore:0, winner:'home', homeRank:24, awayRank:40, weather:'🌧️ Light Rain', tempC:17, stats:{homePoss:48,awayPoss:52,homeShots:13,awayShots:11,homeShotsOT:6,awayShotsOT:3,homeXG:1.9,awayXG:0.8}, prob:{home:48,draw:26,away:26}, homeScorers:[{name:'Irankunda',min:27},{name:'Metcalfe',min:71}], awayScorers:[] },
+  { id:9,  group:'E', home:'Germany',      homeFlag:'🇩🇪', away:'Curaçao',           awayFlag:'🇨🇼', wibDate:'2026-06-15', wibTime:'00:00', venue:'Houston',           venueFlag:'🇺🇸', status:'completed', homeScore:7, awayScore:1, winner:'home', homeRank:10, awayRank:101,weather:'🌩️ Thundery', tempC:32, stats:{homePoss:67,awayPoss:33,homeShots:22,awayShots:5,homeShotsOT:9,awayShotsOT:2,homeXG:5.2,awayXG:0.4}, prob:{home:88,draw:8,away:4}, homeScorers:[{name:'Nmecha',min:6},{name:'Schlotterbeck',min:38},{name:'Havertz',min:45},{name:'Musiala',min:47},{name:'Brown',min:68},{name:'Undav',min:78},{name:'Havertz',min:88}], awayScorers:[{name:'Comenencia',min:32}] },
+  { id:10, group:'F', home:'Netherlands',  homeFlag:'🇳🇱', away:'Japan',             awayFlag:'🇯🇵', wibDate:'2026-06-15', wibTime:'03:00', venue:'Arlington (Dallas)',venueFlag:'🇺🇸', status:'completed', homeScore:2, awayScore:2, winner:'draw', homeRank:7,  awayRank:18, weather:'☀️ Hot', tempC:34, stats:{homePoss:53,awayPoss:47,homeShots:14,awayShots:13,homeShotsOT:5,awayShotsOT:5,homeXG:1.9,awayXG:1.7}, prob:{home:55,draw:24,away:21}, homeScorers:[{name:'Van Dijk',min:29},{name:'Summerville',min:61}], awayScorers:[{name:'Endo',min:44},{name:'Kamada',min:89}] },
+  { id:11, group:'E', home:'Ivory Coast',  homeFlag:'🇨🇮', away:'Ecuador',           awayFlag:'🇪🇨', wibDate:'2026-06-15', wibTime:'06:00', venue:'Philadelphia',      venueFlag:'🇺🇸', status:'completed', homeScore:1, awayScore:0, winner:'home', homeRank:35, awayRank:26, weather:'⛅ Partly Cloudy', tempC:28, stats:{homePoss:49,awayPoss:51,homeShots:11,awayShots:13,homeShotsOT:4,awayShotsOT:4,homeXG:1.2,awayXG:1.4}, prob:{home:44,draw:26,away:30}, homeScorers:[{name:'Amad Diallo',min:90}], awayScorers:[] },
+  { id:12, group:'F', home:'Sweden',       homeFlag:'🇸🇪', away:'Tunisia',           awayFlag:'🇹🇳', wibDate:'2026-06-15', wibTime:'09:00', venue:'Monterrey',         venueFlag:'🇲🇽', status:'completed', homeScore:2, awayScore:0, winner:'home', homeRank:29, awayRank:62, weather:'☀️ Hot', tempC:35, stats:{homePoss:56,awayPoss:44,homeShots:15,awayShots:9,homeShotsOT:6,awayShotsOT:3,homeXG:2.0,awayXG:0.7}, prob:{home:48,draw:26,away:26}, homeScorers:[{name:'Ayari',min:7},{name:'Ayari',min:66}], awayScorers:[] },
+  { id:13, group:'H', home:'Spain',        homeFlag:'🇪🇸', away:'Cape Verde',        awayFlag:'🇨🇻', wibDate:'2026-06-15', wibTime:'23:00', venue:'Atlanta',           venueFlag:'🇺🇸', status:'completed', homeScore:0, awayScore:0, winner:'draw', homeRank:2,  awayRank:84, weather:'🌦️ Partly Cloudy', tempC:30, stats:{homePoss:74,awayPoss:26,homeShots:27,awayShots:6,homeShotsOT:8,awayShotsOT:3,homeXG:2.29,awayXG:0.29}, prob:{home:76,draw:16,away:8}, homeScorers:[], awayScorers:[] },
+  { id:14, group:'G', home:'Belgium',      homeFlag:'🇧🇪', away:'Egypt',             awayFlag:'🇪🇬', wibDate:'2026-06-16', wibTime:'02:00', venue:'Seattle',           venueFlag:'🇺🇸', status:'completed', homeScore:1, awayScore:1, winner:'draw', homeRank:9,  awayRank:44, weather:'🌥️ Overcast', tempC:18, stats:{homePoss:52,awayPoss:48,homeShots:15,awayShots:14,homeShotsOT:5,awayShotsOT:5,homeXG:1.31,awayXG:1.07}, prob:{home:55,draw:24,away:21}, homeScorers:[{name:'De Ketelaere',min:45}], awayScorers:[{name:'Hany OG',min:68}] },
+  { id:15, group:'H', home:'Saudi Arabia', homeFlag:'🇸🇦', away:'Uruguay',           awayFlag:'🇺🇾', wibDate:'2026-06-16', wibTime:'05:00', venue:'Miami',             venueFlag:'🇺🇸', status:'completed', homeScore:1, awayScore:1, winner:'draw', homeRank:56, awayRank:17, weather:'⛅ Partly Cloudy', tempC:31, stats:{homePoss:33,awayPoss:67,homeShots:7,awayShots:28,homeShotsOT:3,awayShotsOT:1,homeXG:0.99,awayXG:1.58}, prob:{home:42,draw:26,away:32}, homeScorers:[{name:'Al-Amri',min:41}], awayScorers:[{name:'Araujo',min:80}] },
+  { id:16, group:'G', home:'Iran',         homeFlag:'🇮🇷', away:'New Zealand',       awayFlag:'🇳🇿', wibDate:'2026-06-16', wibTime:'08:00', venue:'Los Angeles',       venueFlag:'🇺🇸', status:'completed', homeScore:2, awayScore:2, winner:'draw', homeRank:34, awayRank:95, weather:'☀️ Sunny', tempC:24, stats:{homePoss:48,awayPoss:52,homeShots:14,awayShots:13,homeShotsOT:5,awayShotsOT:6,homeXG:1.6,awayXG:1.8}, prob:{home:38,draw:28,away:34}, homeScorers:[{name:'Rezaeian',min:32},{name:'Mohebbi',min:64}], awayScorers:[{name:'Just',min:7},{name:'Just',min:54}] },
+  // Upcoming matches
+  { id:17, group:'I', home:'France',       homeFlag:'🇫🇷', away:'Senegal',           awayFlag:'🇸🇳', wibDate:'2026-06-17', wibTime:'02:00', venue:'East Rutherford',   venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:1,  awayRank:14, weather:'⛅ Partly Cloudy', tempC:25, prob:{home:62,draw:22,away:16} },
+  { id:18, group:'I', home:'Iraq',         homeFlag:'🇮🇶', away:'Norway',            awayFlag:'🇳🇴', wibDate:'2026-06-17', wibTime:'05:00', venue:'Foxborough',        venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:58, awayRank:27, weather:'⛅ Partly Cloudy', tempC:22, prob:{home:18,draw:26,away:56} },
+  { id:19, group:'J', home:'Argentina',    homeFlag:'🇦🇷', away:'Algeria',           awayFlag:'🇩🇿', wibDate:'2026-06-17', wibTime:'08:00', venue:'Kansas City',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:3,  awayRank:42, weather:'⛅ Partly Cloudy', tempC:29, prob:{home:68,draw:18,away:14} },
+  { id:20, group:'J', home:'Austria',      homeFlag:'🇦🇹', away:'Jordan',            awayFlag:'🇯🇴', wibDate:'2026-06-17', wibTime:'11:00', venue:'Santa Clara',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:37, awayRank:87, weather:'🌥️ Cloudy', tempC:18, prob:{home:55,draw:24,away:21} },
+  { id:21, group:'K', home:'Portugal',     homeFlag:'🇵🇹', away:'DR Congo',          awayFlag:'🇨🇩', wibDate:'2026-06-18', wibTime:'00:00', venue:'Houston',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:5,  awayRank:57, weather:'🌩️ Thundery', tempC:32, prob:{home:65,draw:20,away:15} },
+  { id:22, group:'L', home:'England',      homeFlag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', away:'Croatia',           awayFlag:'🇭🇷', wibDate:'2026-06-18', wibTime:'03:00', venue:'Arlington (Dallas)',venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:4,  awayRank:11, weather:'☀️ Hot', tempC:34, prob:{home:52,draw:26,away:22} },
+  { id:23, group:'L', home:'Ghana',        homeFlag:'🇬🇭', away:'Panama',            awayFlag:'🇵🇦', wibDate:'2026-06-18', wibTime:'06:00', venue:'Toronto',           venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:43, awayRank:72, weather:'⛅ Partly Cloudy', tempC:21, prob:{home:44,draw:28,away:28} },
+  { id:24, group:'K', home:'Uzbekistan',   homeFlag:'🇺🇿', away:'Colombia',          awayFlag:'🇨🇴', wibDate:'2026-06-18', wibTime:'09:00', venue:'Mexico City',       venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:69, awayRank:13, weather:'⛅ Partly Cloudy', tempC:17, prob:{home:22,draw:28,away:50} },
+  { id:25, group:'A', home:'Czechia',      homeFlag:'🇨🇿', away:'South Africa',      awayFlag:'🇿🇦', wibDate:'2026-06-18', wibTime:'23:00', venue:'Atlanta',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:48, awayRank:60, weather:'🌦️ Partly Cloudy', tempC:30, prob:{home:48,draw:28,away:24} },
+  { id:26, group:'B', home:'Switzerland',  homeFlag:'🇨🇭', away:'Bosnia & Herz.',    awayFlag:'🇧🇦', wibDate:'2026-06-19', wibTime:'02:00', venue:'Los Angeles',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:19, awayRank:50, weather:'☀️ Sunny', tempC:24, prob:{home:60,draw:22,away:18} },
+  { id:27, group:'B', home:'Canada',       homeFlag:'🇨🇦', away:'Qatar',             awayFlag:'🇶🇦', wibDate:'2026-06-19', wibTime:'05:00', venue:'Vancouver',         venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:30, awayRank:38, weather:'🌧️ Light Rain', tempC:17, prob:{home:55,draw:24,away:21} },
+  { id:28, group:'A', home:'Mexico',       homeFlag:'🇲🇽', away:'South Korea',       awayFlag:'🇰🇷', wibDate:'2026-06-19', wibTime:'08:00', venue:'Guadalajara',       venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:15, awayRank:23, weather:'🌦️ Chance Rain', tempC:22, prob:{home:48,draw:26,away:26} },
+  { id:29, group:'D', home:'USA',          homeFlag:'🇺🇸', away:'Australia',         awayFlag:'🇦🇺', wibDate:'2026-06-20', wibTime:'02:00', venue:'Seattle',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:16, awayRank:24, weather:'🌥️ Overcast', tempC:18, prob:{home:55,draw:24,away:21} },
+  { id:30, group:'C', home:'Scotland',     homeFlag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', away:'Morocco',           awayFlag:'🇲🇦', wibDate:'2026-06-20', wibTime:'05:00', venue:'Foxborough',        venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:33, awayRank:8,  weather:'⛅ Partly Cloudy', tempC:22, prob:{home:28,draw:26,away:46} },
+  { id:31, group:'C', home:'Brazil',       homeFlag:'🇧🇷', away:'Haiti',             awayFlag:'🇭🇹', wibDate:'2026-06-20', wibTime:'07:30', venue:'Philadelphia',      venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:6,  awayRank:83, weather:'⛅ Partly Cloudy', tempC:28, prob:{home:88,draw:8,away:4} },
+  { id:32, group:'D', home:'Türkiye',      homeFlag:'🇹🇷', away:'Paraguay',          awayFlag:'🇵🇾', wibDate:'2026-06-20', wibTime:'10:00', venue:'Santa Clara',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:40, awayRank:64, weather:'🌥️ Cloudy', tempC:18, prob:{home:52,draw:26,away:22} },
+  { id:33, group:'F', home:'Netherlands',  homeFlag:'🇳🇱', away:'Sweden',            awayFlag:'🇸🇪', wibDate:'2026-06-21', wibTime:'00:00', venue:'Houston',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:7,  awayRank:29, weather:'🌩️ Thundery', tempC:32, prob:{home:58,draw:24,away:18} },
+  { id:34, group:'E', home:'Germany',      homeFlag:'🇩🇪', away:'Ivory Coast',       awayFlag:'🇨🇮', wibDate:'2026-06-21', wibTime:'03:00', venue:'Toronto',           venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:10, awayRank:35, weather:'⛅ Partly Cloudy', tempC:21, prob:{home:62,draw:22,away:16} },
+  { id:35, group:'E', home:'Ecuador',      homeFlag:'🇪🇨', away:'Curaçao',           awayFlag:'🇨🇼', wibDate:'2026-06-21', wibTime:'07:00', venue:'Kansas City',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:26, awayRank:101,weather:'⛅ Partly Cloudy', tempC:29, prob:{home:72,draw:18,away:10} },
+  { id:36, group:'F', home:'Tunisia',      homeFlag:'🇹🇳', away:'Japan',             awayFlag:'🇯🇵', wibDate:'2026-06-21', wibTime:'11:00', venue:'Monterrey',         venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:62, awayRank:18, weather:'☀️ Hot', tempC:35, prob:{home:28,draw:28,away:44} },
+  { id:37, group:'H', home:'Spain',        homeFlag:'🇪🇸', away:'Saudi Arabia',      awayFlag:'🇸🇦', wibDate:'2026-06-21', wibTime:'23:00', venue:'Atlanta',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:2,  awayRank:56, weather:'🌦️ Partly Cloudy', tempC:30, prob:{home:68,draw:18,away:14} },
+  { id:38, group:'G', home:'Belgium',      homeFlag:'🇧🇪', away:'Iran',              awayFlag:'🇮🇷', wibDate:'2026-06-22', wibTime:'02:00', venue:'Los Angeles',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:9,  awayRank:34, weather:'☀️ Sunny', tempC:24, prob:{home:58,draw:24,away:18} },
+  { id:39, group:'H', home:'Uruguay',      homeFlag:'🇺🇾', away:'Cape Verde',        awayFlag:'🇨🇻', wibDate:'2026-06-22', wibTime:'05:00', venue:'Miami',             venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:17, awayRank:84, weather:'⛅ Partly Cloudy', tempC:31, prob:{home:75,draw:16,away:9} },
+  { id:40, group:'G', home:'New Zealand',  homeFlag:'🇳🇿', away:'Egypt',             awayFlag:'🇪🇬', wibDate:'2026-06-22', wibTime:'08:00', venue:'Vancouver',         venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:95, awayRank:44, weather:'🌧️ Light Rain', tempC:17, prob:{home:28,draw:28,away:44} },
+  { id:41, group:'J', home:'Argentina',    homeFlag:'🇦🇷', away:'Austria',           awayFlag:'🇦🇹', wibDate:'2026-06-23', wibTime:'00:00', venue:'Arlington (Dallas)',venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:3,  awayRank:37, weather:'☀️ Hot', tempC:34, prob:{home:70,draw:18,away:12} },
+  { id:42, group:'I', home:'France',       homeFlag:'🇫🇷', away:'Iraq',              awayFlag:'🇮🇶', wibDate:'2026-06-23', wibTime:'04:00', venue:'Philadelphia',      venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:1,  awayRank:58, weather:'⛅ Partly Cloudy', tempC:28, prob:{home:80,draw:14,away:6} },
+  { id:43, group:'I', home:'Norway',       homeFlag:'🇳🇴', away:'Senegal',           awayFlag:'🇸🇳', wibDate:'2026-06-23', wibTime:'07:00', venue:'East Rutherford',   venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:27, awayRank:14, weather:'⛅ Partly Cloudy', tempC:25, prob:{home:44,draw:26,away:30} },
+  { id:44, group:'J', home:'Jordan',       homeFlag:'🇯🇴', away:'Algeria',           awayFlag:'🇩🇿', wibDate:'2026-06-23', wibTime:'10:00', venue:'Santa Clara',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:87, awayRank:42, weather:'🌥️ Cloudy', tempC:18, prob:{home:28,draw:28,away:44} },
+  { id:45, group:'K', home:'Portugal',     homeFlag:'🇵🇹', away:'Uzbekistan',        awayFlag:'🇺🇿', wibDate:'2026-06-24', wibTime:'00:00', venue:'Houston',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:5,  awayRank:69, weather:'🌩️ Thundery', tempC:32, prob:{home:72,draw:18,away:10} },
+  { id:46, group:'L', home:'England',      homeFlag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', away:'Ghana',             awayFlag:'🇬🇭', wibDate:'2026-06-24', wibTime:'03:00', venue:'Foxborough',        venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:4,  awayRank:43, weather:'⛅ Partly Cloudy', tempC:22, prob:{home:68,draw:18,away:14} },
+  { id:47, group:'L', home:'Panama',       homeFlag:'🇵🇦', away:'Croatia',           awayFlag:'🇭🇷', wibDate:'2026-06-24', wibTime:'06:00', venue:'Toronto',           venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:72, awayRank:11, weather:'⛅ Partly Cloudy', tempC:21, prob:{home:18,draw:24,away:58} },
+  { id:48, group:'K', home:'Colombia',     homeFlag:'🇨🇴', away:'DR Congo',          awayFlag:'🇨🇩', wibDate:'2026-06-24', wibTime:'09:00', venue:'Guadalajara',       venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:13, awayRank:57, weather:'🌦️ Chance Rain', tempC:22, prob:{home:62,draw:22,away:16} },
+  // MD3 (selected key matches)
+  { id:49, group:'B', home:'Switzerland',  homeFlag:'🇨🇭', away:'Canada',            awayFlag:'🇨🇦', wibDate:'2026-06-25', wibTime:'02:00', venue:'Vancouver',         venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:19, awayRank:30, weather:'🌧️ Light Rain', tempC:17, prob:{home:52,draw:26,away:22} },
+  { id:50, group:'B', home:'Bosnia & Herz.',homeFlag:'🇧🇦',away:'Qatar',             awayFlag:'🇶🇦', wibDate:'2026-06-25', wibTime:'02:00', venue:'Seattle',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:50, awayRank:38, weather:'🌥️ Overcast', tempC:18, prob:{home:44,draw:28,away:28} },
+  { id:51, group:'C', home:'Scotland',     homeFlag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', away:'Brazil',            awayFlag:'🇧🇷', wibDate:'2026-06-25', wibTime:'05:00', venue:'Miami',             venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:33, awayRank:6,  weather:'⛅ Partly Cloudy', tempC:31, prob:{home:14,draw:20,away:66} },
+  { id:52, group:'C', home:'Morocco',      homeFlag:'🇲🇦', away:'Haiti',             awayFlag:'🇭🇹', wibDate:'2026-06-25', wibTime:'05:00', venue:'Atlanta',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:8,  awayRank:83, weather:'🌦️ Partly Cloudy', tempC:30, prob:{home:78,draw:14,away:8} },
+  { id:53, group:'A', home:'Czechia',      homeFlag:'🇨🇿', away:'Mexico',            awayFlag:'🇲🇽', wibDate:'2026-06-25', wibTime:'08:00', venue:'Mexico City',       venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:48, awayRank:15, weather:'⛅ Partly Cloudy', tempC:17, prob:{home:28,draw:28,away:44} },
+  { id:54, group:'A', home:'South Africa', homeFlag:'🇿🇦', away:'South Korea',       awayFlag:'🇰🇷', wibDate:'2026-06-25', wibTime:'08:00', venue:'Monterrey',         venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:60, awayRank:23, weather:'☀️ Hot', tempC:35, prob:{home:28,draw:28,away:44} },
+  { id:55, group:'E', home:'Curaçao',      homeFlag:'🇨🇼', away:'Ivory Coast',       awayFlag:'🇨🇮', wibDate:'2026-06-26', wibTime:'03:00', venue:'Philadelphia',      venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:101,awayRank:35, weather:'⛅ Partly Cloudy', tempC:28, prob:{home:8,draw:18,away:74} },
+  { id:56, group:'E', home:'Ecuador',      homeFlag:'🇪🇨', away:'Germany',           awayFlag:'🇩🇪', wibDate:'2026-06-26', wibTime:'03:00', venue:'East Rutherford',   venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:26, awayRank:10, weather:'⛅ Partly Cloudy', tempC:25, prob:{home:24,draw:24,away:52} },
+  { id:57, group:'F', home:'Japan',        homeFlag:'🇯🇵', away:'Sweden',            awayFlag:'🇸🇪', wibDate:'2026-06-26', wibTime:'06:00', venue:'Arlington (Dallas)',venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:18, awayRank:29, weather:'☀️ Hot', tempC:34, prob:{home:44,draw:28,away:28} },
+  { id:58, group:'F', home:'Tunisia',      homeFlag:'🇹🇳', away:'Netherlands',       awayFlag:'🇳🇱', wibDate:'2026-06-26', wibTime:'06:00', venue:'Kansas City',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:62, awayRank:7,  weather:'⛅ Partly Cloudy', tempC:29, prob:{home:10,draw:20,away:70} },
+  { id:59, group:'D', home:'Türkiye',      homeFlag:'🇹🇷', away:'USA',               awayFlag:'🇺🇸', wibDate:'2026-06-26', wibTime:'09:00', venue:'Los Angeles',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:40, awayRank:16, weather:'☀️ Sunny', tempC:24, prob:{home:32,draw:26,away:42} },
+  { id:60, group:'D', home:'Paraguay',     homeFlag:'🇵🇾', away:'Australia',         awayFlag:'🇦🇺', wibDate:'2026-06-26', wibTime:'09:00', venue:'Santa Clara',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:64, awayRank:24, weather:'🌥️ Cloudy', tempC:18, prob:{home:32,draw:28,away:40} },
+  { id:61, group:'I', home:'Norway',       homeFlag:'🇳🇴', away:'France',            awayFlag:'🇫🇷', wibDate:'2026-06-27', wibTime:'02:00', venue:'Foxborough',        venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:27, awayRank:1,  weather:'⛅ Partly Cloudy', tempC:22, prob:{home:20,draw:22,away:58} },
+  { id:62, group:'I', home:'Senegal',      homeFlag:'🇸🇳', away:'Iraq',              awayFlag:'🇮🇶', wibDate:'2026-06-27', wibTime:'02:00', venue:'Toronto',           venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:14, awayRank:58, weather:'⛅ Partly Cloudy', tempC:21, prob:{home:60,draw:22,away:18} },
+  { id:63, group:'H', home:'Cape Verde',   homeFlag:'🇨🇻', away:'Saudi Arabia',      awayFlag:'🇸🇦', wibDate:'2026-06-27', wibTime:'07:00', venue:'Houston',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:84, awayRank:56, weather:'🌩️ Thundery', tempC:32, prob:{home:30,draw:28,away:42} },
+  { id:64, group:'H', home:'Uruguay',      homeFlag:'🇺🇾', away:'Spain',             awayFlag:'🇪🇸', wibDate:'2026-06-27', wibTime:'07:00', venue:'Guadalajara',       venueFlag:'🇲🇽', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:17, awayRank:2,  weather:'🌦️ Chance Rain', tempC:22, prob:{home:22,draw:24,away:54} },
+  { id:65, group:'G', home:'Egypt',        homeFlag:'🇪🇬', away:'Iran',              awayFlag:'🇮🇷', wibDate:'2026-06-27', wibTime:'10:00', venue:'Seattle',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:44, awayRank:34, weather:'🌥️ Overcast', tempC:18, prob:{home:38,draw:30,away:32} },
+  { id:66, group:'G', home:'New Zealand',  homeFlag:'🇳🇿', away:'Belgium',           awayFlag:'🇧🇪', wibDate:'2026-06-27', wibTime:'10:00', venue:'Vancouver',         venueFlag:'🇨🇦', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:95, awayRank:9,  weather:'🌧️ Light Rain', tempC:17, prob:{home:12,draw:20,away:68} },
+  { id:67, group:'L', home:'Panama',       homeFlag:'🇵🇦', away:'England',           awayFlag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', wibDate:'2026-06-28', wibTime:'04:00', venue:'East Rutherford',   venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:72, awayRank:4,  weather:'⛅ Partly Cloudy', tempC:25, prob:{home:10,draw:20,away:70} },
+  { id:68, group:'L', home:'Croatia',      homeFlag:'🇭🇷', away:'Ghana',             awayFlag:'🇬🇭', wibDate:'2026-06-28', wibTime:'04:00', venue:'Philadelphia',      venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:11, awayRank:43, weather:'⛅ Partly Cloudy', tempC:28, prob:{home:58,draw:24,away:18} },
+  { id:69, group:'K', home:'Colombia',     homeFlag:'🇨🇴', away:'Portugal',          awayFlag:'🇵🇹', wibDate:'2026-06-28', wibTime:'06:30', venue:'Miami',             venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:13, awayRank:5,  weather:'⛅ Partly Cloudy', tempC:31, prob:{home:34,draw:26,away:40} },
+  { id:70, group:'K', home:'DR Congo',     homeFlag:'🇨🇩', away:'Uzbekistan',        awayFlag:'🇺🇿', wibDate:'2026-06-28', wibTime:'06:30', venue:'Atlanta',           venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:57, awayRank:69, weather:'🌦️ Partly Cloudy', tempC:30, prob:{home:44,draw:28,away:28} },
+  { id:71, group:'J', home:'Algeria',      homeFlag:'🇩🇿', away:'Austria',           awayFlag:'🇦🇹', wibDate:'2026-06-28', wibTime:'09:00', venue:'Kansas City',       venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:42, awayRank:37, weather:'⛅ Partly Cloudy', tempC:29, prob:{home:36,draw:28,away:36} },
+  { id:72, group:'J', home:'Jordan',       homeFlag:'🇯🇴', away:'Argentina',         awayFlag:'🇦🇷', wibDate:'2026-06-28', wibTime:'09:00', venue:'Arlington (Dallas)',venueFlag:'🇺🇸', status:'upcoming', homeScore:null, awayScore:null, winner:null, homeRank:87, awayRank:3,  weather:'☀️ Hot', tempC:34, prob:{home:8,draw:14,away:78} },
+];
+
+// ─── STANDINGS DATA ────────────────────────────────────────────────────────────
+const standingsData = {
+  A: [
+    { team:'Mexico',       flag:'🇲🇽', rank:15, gp:1, w:1, d:0, l:0, gf:2, ga:0, gd:2, pts:3 },
+    { team:'South Korea',  flag:'🇰🇷', rank:23, gp:1, w:1, d:0, l:0, gf:2, ga:1, gd:1, pts:3 },
+    { team:'Czechia',      flag:'🇨🇿', rank:48, gp:1, w:0, d:0, l:1, gf:1, ga:2, gd:-1,pts:0 },
+    { team:'South Africa', flag:'🇿🇦', rank:60, gp:1, w:0, d:0, l:1, gf:0, ga:2, gd:-2,pts:0 },
+  ],
+  B: [
+    { team:'Canada',       flag:'🇨🇦', rank:30, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Bosnia & Herz.',flag:'🇧🇦',rank:50, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Qatar',        flag:'🇶🇦', rank:38, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Switzerland',  flag:'🇨🇭', rank:19, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+  ],
+  C: [
+    { team:'Scotland',     flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', rank:33, gp:1, w:1, d:0, l:0, gf:1, ga:0, gd:1, pts:3 },
+    { team:'Brazil',       flag:'🇧🇷', rank:6,  gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Morocco',      flag:'🇲🇦', rank:8,  gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Haiti',        flag:'🇭🇹', rank:83, gp:1, w:0, d:0, l:1, gf:0, ga:1, gd:-1,pts:0 },
+  ],
+  D: [
+    { team:'USA',          flag:'🇺🇸', rank:16, gp:1, w:1, d:0, l:0, gf:4, ga:1, gd:3, pts:3 },
+    { team:'Australia',    flag:'🇦🇺', rank:24, gp:1, w:1, d:0, l:0, gf:2, ga:0, gd:2, pts:3 },
+    { team:'Türkiye',      flag:'🇹🇷', rank:40, gp:1, w:0, d:0, l:1, gf:0, ga:2, gd:-2,pts:0 },
+    { team:'Paraguay',     flag:'🇵🇾', rank:64, gp:1, w:0, d:0, l:1, gf:1, ga:4, gd:-3,pts:0 },
+  ],
+  E: [
+    { team:'Germany',      flag:'🇩🇪', rank:10, gp:1, w:1, d:0, l:0, gf:7, ga:1, gd:6, pts:3 },
+    { team:'Ivory Coast',  flag:'🇨🇮', rank:35, gp:1, w:1, d:0, l:0, gf:1, ga:0, gd:1, pts:3 },
+    { team:'Ecuador',      flag:'🇪🇨', rank:26, gp:1, w:0, d:0, l:1, gf:0, ga:1, gd:-1,pts:0 },
+    { team:'Curaçao',      flag:'🇨🇼', rank:101,gp:1, w:0, d:0, l:1, gf:1, ga:7, gd:-6,pts:0 },
+  ],
+  F: [
+    { team:'Sweden',       flag:'🇸🇪', rank:29, gp:1, w:1, d:0, l:0, gf:2, ga:0, gd:2, pts:3 },
+    { team:'Netherlands',  flag:'🇳🇱', rank:7,  gp:1, w:0, d:1, l:0, gf:2, ga:2, gd:0, pts:1 },
+    { team:'Japan',        flag:'🇯🇵', rank:18, gp:1, w:0, d:1, l:0, gf:2, ga:2, gd:0, pts:1 },
+    { team:'Tunisia',      flag:'🇹🇳', rank:62, gp:1, w:0, d:0, l:1, gf:0, ga:2, gd:-2,pts:0 },
+  ],
+  G: [
+    { team:'Belgium',      flag:'🇧🇪', rank:9,  gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Egypt',        flag:'🇪🇬', rank:44, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Iran',         flag:'🇮🇷', rank:34, gp:1, w:0, d:1, l:0, gf:2, ga:2, gd:0, pts:1 },
+    { team:'New Zealand',  flag:'🇳🇿', rank:95, gp:1, w:0, d:1, l:0, gf:2, ga:2, gd:0, pts:1 },
+  ],
+  H: [
+    { team:'Spain',        flag:'🇪🇸', rank:2,  gp:1, w:0, d:1, l:0, gf:0, ga:0, gd:0, pts:1 },
+    { team:'Saudi Arabia', flag:'🇸🇦', rank:56, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Uruguay',      flag:'🇺🇾', rank:17, gp:1, w:0, d:1, l:0, gf:1, ga:1, gd:0, pts:1 },
+    { team:'Cape Verde',   flag:'🇨🇻', rank:84, gp:1, w:0, d:1, l:0, gf:0, ga:0, gd:0, pts:1 },
+  ],
+  I: [
+    { team:'France',       flag:'🇫🇷', rank:1,  gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Senegal',      flag:'🇸🇳', rank:14, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Norway',       flag:'🇳🇴', rank:27, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Iraq',         flag:'🇮🇶', rank:58, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+  ],
+  J: [
+    { team:'Argentina',    flag:'🇦🇷', rank:3,  gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Algeria',      flag:'🇩🇿', rank:42, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Austria',      flag:'🇦🇹', rank:37, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Jordan',       flag:'🇯🇴', rank:87, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+  ],
+  K: [
+    { team:'Portugal',     flag:'🇵🇹', rank:5,  gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Colombia',     flag:'🇨🇴', rank:13, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'DR Congo',     flag:'🇨🇩', rank:57, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Uzbekistan',   flag:'🇺🇿', rank:69, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+  ],
+  L: [
+    { team:'England',      flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', rank:4,  gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Croatia',      flag:'🇭🇷', rank:11, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Ghana',        flag:'🇬🇭', rank:43, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+    { team:'Panama',       flag:'🇵🇦', rank:72, gp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0 },
+  ],
+};
+
+// ─── SCORERS DATA ─────────────────────────────────────────────────────────────
+const topScorers = [
+  { name:'Folarin Balogun',    team:'USA',          flag:'🇺🇸', goals:2, assists:0 },
+  { name:'Kai Havertz',        team:'Germany',      flag:'🇩🇪', goals:2, assists:0 },
+  { name:'Yasin Ayari',        team:'Sweden',       flag:'🇸🇪', goals:2, assists:0 },
+  { name:'Julian Quinones',    team:'Mexico',       flag:'🇲🇽', goals:1, assists:0 },
+  { name:'Raul Jimenez',       team:'Mexico',       flag:'🇲🇽', goals:1, assists:0 },
+  { name:'Hwang In-beom',      team:'South Korea',  flag:'🇰🇷', goals:1, assists:1 },
+  { name:'Oh Hyeon-gyu',       team:'South Korea',  flag:'🇰🇷', goals:1, assists:0 },
+  { name:'Ladislav Krejci',    team:'Czechia',      flag:'🇨🇿', goals:1, assists:0 },
+  { name:'Cyle Larin',         team:'Canada',       flag:'🇨🇦', goals:1, assists:0 },
+  { name:'Jovo Lukic',         team:'Bosnia & Herz.',flag:'🇧🇦',goals:1, assists:0 },
+  { name:'Gio Reyna',          team:'USA',          flag:'🇺🇸', goals:1, assists:0 },
+  { name:'Breel Embolo',       team:'Switzerland',  flag:'🇨🇭', goals:1, assists:0 },
+  { name:'Boualem Khoukhi',    team:'Qatar',        flag:'🇶🇦', goals:1, assists:0 },
+  { name:'Ismael Saibari',     team:'Morocco',      flag:'🇲🇦', goals:1, assists:0 },
+  { name:'Vinicius Jr',        team:'Brazil',       flag:'🇧🇷', goals:1, assists:0 },
+  { name:'John McGinn',        team:'Scotland',     flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', goals:1, assists:0 },
+  { name:'Nestory Irankunda',  team:'Australia',    flag:'🇦🇺', goals:1, assists:0 },
+  { name:'Connor Metcalfe',    team:'Australia',    flag:'🇦🇺', goals:1, assists:0 },
+  { name:'Felix Nmecha',       team:'Germany',      flag:'🇩🇪', goals:1, assists:0 },
+  { name:'Nico Schlotterbeck', team:'Germany',      flag:'🇩🇪', goals:1, assists:0 },
+  { name:'Jamal Musiala',      team:'Germany',      flag:'🇩🇪', goals:1, assists:0 },
+  { name:'Nathaniel Brown',    team:'Germany',      flag:'🇩🇪', goals:1, assists:0 },
+  { name:'Deniz Undav',        team:'Germany',      flag:'🇩🇪', goals:1, assists:0 },
+  { name:'Livano Comenencia',  team:'Curaçao',      flag:'🇨🇼', goals:1, assists:0 },
+  { name:'Virgil van Dijk',    team:'Netherlands',  flag:'🇳🇱', goals:1, assists:0 },
+  { name:'Crysencio Summerville',team:'Netherlands',flag:'🇳🇱', goals:1, assists:0 },
+  { name:'Amad Diallo',        team:'Ivory Coast',  flag:'🇨🇮', goals:1, assists:0 },
+  { name:'Elijah Just',        team:'New Zealand',  flag:'🇳🇿', goals:2, assists:0 },
+  { name:'Ramin Rezaeian',     team:'Iran',         flag:'🇮🇷', goals:1, assists:0 },
+  { name:'Mohammad Mohebbi',   team:'Iran',         flag:'🇮🇷', goals:1, assists:0 },
+  { name:'Abdulelah Al-Amri',  team:'Saudi Arabia', flag:'🇸🇦', goals:1, assists:0 },
+  { name:'Maxi Araujo',        team:'Uruguay',      flag:'🇺🇾', goals:1, assists:0 },
+  { name:'Charles De Ketelaere',team:'Belgium',     flag:'🇧🇪', goals:1, assists:0 },
+];
+
+const topAssists = [
+  { name:'Deniz Undav',        team:'Germany',      flag:'🇩🇪', assists:2, goals:1 },
+  { name:'Alexander Isak',     team:'Sweden',       flag:'🇸🇪', assists:2, goals:0 },
+  { name:'Hwang In-beom',      team:'South Korea',  flag:'🇰🇷', assists:1, goals:1 },
+  { name:'Nathaniel Brown',    team:'Germany',      flag:'🇩🇪', assists:1, goals:1 },
+  { name:'Viktor Gyokeres',    team:'Sweden',       flag:'🇸🇪', assists:1, goals:0 },
+  { name:'Daichi Kamada',      team:'Japan',        flag:'🇯🇵', assists:1, goals:1 },
+  { name:'Mauricio',           team:'Paraguay',     flag:'🇵🇾', assists:1, goals:1 },
+];
+
+// ─── DAYS ─────────────────────────────────────────────────────────────────────
+const dayNames = {
+  '2026-06-12':'Friday, 12 Jun','2026-06-13':'Saturday, 13 Jun','2026-06-14':'Sunday, 14 Jun',
+  '2026-06-15':'Monday, 15 Jun','2026-06-16':'Tuesday, 16 Jun','2026-06-17':'Wednesday, 17 Jun',
+  '2026-06-18':'Thursday, 18 Jun','2026-06-19':'Friday, 19 Jun','2026-06-20':'Saturday, 20 Jun',
+  '2026-06-21':'Sunday, 21 Jun','2026-06-22':'Monday, 22 Jun','2026-06-23':'Tuesday, 23 Jun',
+  '2026-06-24':'Wednesday, 24 Jun','2026-06-25':'Thursday, 25 Jun','2026-06-26':'Friday, 26 Jun',
+  '2026-06-27':'Saturday, 27 Jun','2026-06-28':'Sunday, 28 Jun',
+};
+const matchdays = {
+  '2026-06-12':'MD1','2026-06-13':'MD1','2026-06-14':'MD1','2026-06-15':'MD1',
+  '2026-06-16':'MD1','2026-06-17':'MD1','2026-06-18':'MD1/2','2026-06-19':'MD2',
+  '2026-06-20':'MD2','2026-06-21':'MD2','2026-06-22':'MD2','2026-06-23':'MD2',
+  '2026-06-24':'MD2','2026-06-25':'MD3','2026-06-26':'MD3','2026-06-27':'MD3','2026-06-28':'MD3',
+};
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentTab  = 'schedule';
+let currentView = 'all';
+let currentGroup = 'A';
+let openDetails = new Set();
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function statBar(home, away) {
+  const t = parseFloat(home) + parseFloat(away);
+  const hp = t > 0 ? (home/t*100).toFixed(0) : 50;
+  const ap = 100 - hp;
+  return '<div class="stat-bar-wrap" style="flex:3"><div class="stat-bar-home" style="width:' + hp + '%"></div><div class="stat-bar-away" style="width:' + ap + '%"></div></div>';
+}
+
+function renderDetails(m) {
+  const hasS = m.stats !== undefined;
+  const hasP = m.prob !== undefined;
+  if (!hasS && !hasP) return '';
+  let html = '';
+  if (hasS) {
+    const s = m.stats;
+    html += '<div class="stats-legend"><span><span class="legend-color" style="background:var(--accent)"></span>' + m.home + '</span><span><span class="legend-color" style="background:#3498db"></span>' + m.away + '</span></div>';
+    html += '<div class="stats-title">Match Stats</div>';
+    html += '<div class="stat-row"><span class="stat-val-l">' + s.homePoss + '%</span>' + statBar(s.homePoss, s.awayPoss) + '<span class="stat-val-r">' + s.awayPoss + '%</span><span class="stat-name">Poss</span></div>';
+    html += '<div class="stat-row"><span class="stat-val-l">' + s.homeShots + '</span>' + statBar(s.homeShots, s.awayShots) + '<span class="stat-val-r">' + s.awayShots + '</span><span class="stat-name">Shots</span></div>';
+    html += '<div class="stat-row"><span class="stat-val-l">' + s.homeShotsOT + '</span>' + statBar(s.homeShotsOT, s.awayShotsOT) + '<span class="stat-val-r">' + s.awayShotsOT + '</span><span class="stat-name">On Target</span></div>';
+    html += '<div class="stat-row"><span class="stat-val-l">' + s.homeXG + '</span>' + statBar(s.homeXG, s.awayXG) + '<span class="stat-val-r">' + s.awayXG + '</span><span class="stat-name">xG</span></div>';
+  }
+  if (hasP) {
+    const p = m.prob;
+    html += '<div class="prob-section"><div class="prob-title">Win Probability</div>';
+    html += '<div class="prob-bar-wrap"><div class="prob-home" style="width:' + p.home + '%">' + p.home + '%</div><div class="prob-draw" style="width:' + p.draw + '%">' + p.draw + '%</div><div class="prob-away" style="width:' + p.away + '%">' + p.away + '%</div></div>';
+    html += '<div class="prob-labels"><span>' + m.home + '</span><span>Draw</span><span>' + m.away + '</span></div></div>';
+  }
+  return '<button class="expand-toggle" onclick="toggleDet(' + m.id + ')"><span>' + (hasS ? '📊 Stats' : '') + (hasS && hasP ? ' · ' : '') + (hasP ? '🎯 Prob' : '') + '</span><span class="expand-arrow" id="ea-' + m.id + '">▼</span></button><div class="details-panel" id="dp-' + m.id + '">' + html + '</div>';
+}
+
+function toggleDet(id) {
+  const p = document.getElementById('dp-' + id);
+  const a = document.getElementById('ea-' + id);
+  if (!p) return;
+  const isOpen = p.classList.toggle('open');
+  if (a) a.classList.toggle('open', isOpen);
+  if (isOpen) openDetails.add(id); else openDetails.delete(id);
+}
+
+function renderCard(m) {
+  const isComp = m.status === 'completed';
+  const isLive = m.status === 'live';
+  const homeWin = m.winner === 'home';
+  const awayWin = m.winner === 'away';
+  const isDraw  = m.winner === 'draw';
+  const statusLabel = isComp ? 'FT' : isLive ? '🔴 LIVE' : m.wibTime;
+  const statusCls   = isComp ? 'status-completed' : isLive ? 'status-live' : 'status-upcoming';
+  const cardCls     = isComp ? 'completed' : isLive ? 'live' : '';
+  const scoreHTML   = isComp || isLive ? '<div class="score">' + m.homeScore + ' - ' + m.awayScore + '</div>' : '<div class="score-vs">VS</div>';
+  const rankH = m.homeRank ? '<div class="rank-badge">#' + m.homeRank + '</div>' : '';
+  const rankA = m.awayRank ? '<div class="rank-badge">#' + m.awayRank + '</div>' : '';
+  const wxBadge = m.weather ? '<span class="weather-badge">' + m.weather + ' ' + m.tempC + '°C</span>' : '';
+
+  // Upset detection
+  let upsetHtml = '';
+  if (isComp && m.prob) {
+    const rd = Math.abs((m.homeRank||99)-(m.awayRank||99));
+    if (homeWin && m.prob.home < 35) upsetHtml = rd > 20 ? '<span class="big-upset-tag">🚨 Big Upset!</span>' : '<span class="upset-tag">⚡ Upset</span>';
+    else if (awayWin && m.prob.away < 35) upsetHtml = rd > 20 ? '<span class="big-upset-tag">🚨 Big Upset!</span>' : '<span class="upset-tag">⚡ Upset</span>';
+    else if (isDraw && m.prob.home > 58) upsetHtml = '<span class="upset-tag">⚡ Upset</span>';
+    else if (isDraw && m.prob.away > 58) upsetHtml = '<span class="upset-tag">⚡ Upset</span>';
+  }
+
+  // Scorers line
+  let scorersLine = '';
+  if (isComp && (m.homeScorers || m.awayScorers)) {
+    const hs = (m.homeScorers||[]).map(s => s.name + ' ' + s.min + "'").join(', ');
+    const as = (m.awayScorers||[]).map(s => s.name + ' ' + s.min + "'").join(', ');
+    const parts = [];
+    if (hs) parts.push('<span class="scorer-home">⚽ ' + hs + '</span>');
+    if (as) parts.push('<span class="scorer-away">⚽ ' + as + '</span>');
+    if (parts.length) scorersLine = '<div class="scorers-line">' + parts.join(' &nbsp;|&nbsp; ') + '</div>';
+  }
+
+  return '<div class="match-card ' + cardCls + '">' +
+    '<div class="match-top"><span class="match-group-badge">GRP ' + m.group + '</span><span class="match-time-wib">' + m.wibTime + ' WIB</span><span class="match-status ' + statusCls + '">' + statusLabel + '</span></div>' +
+    '<div class="match-body">' +
+      '<div class="team"><div class="team-flag">' + m.homeFlag + '</div><div class="team-name' + (homeWin?' winner':'') + '">' + m.home + '</div>' + rankH + '</div>' +
+      '<div class="score-area">' + scoreHTML + '</div>' +
+      '<div class="team"><div class="team-flag">' + m.awayFlag + '</div><div class="team-name' + (awayWin?' winner':'') + '">' + m.away + '</div>' + rankA + '</div>' +
+    '</div>' +
+    scorersLine +
+    '<div class="match-bottom"><span style="font-size:9px">📍</span><span class="venue-text">' + (m.venue||'TBC') + '</span>' +
+      (isDraw && isComp ? '<span style="font-size:9px;color:var(--muted)">DRAW</span>' : '') +
+      upsetHtml + wxBadge +
+    '</div>' +
+    renderDetails(m) +
+  '</div>';
+}
+
+// ─── RENDER BY DATE ───────────────────────────────────────────────────────────
+function renderByDate(list) {
+  if (!list.length) return '<div class="no-results">No matches found</div>';
+  const byDate = {};
+  list.forEach(m => { const d = m.wibDate; if (!byDate[d]) byDate[d]=[]; byDate[d].push(m); });
+  let html = '';
+  Object.keys(byDate).sort().forEach(date => {
+    const ms = byDate[date].sort((a,b) => a.wibTime.localeCompare(b.wibTime));
+    html += '<div class="day-section"><div class="day-header"><span class="day-label">' + (dayNames[date]||date) + '</span><span class="day-date">' + (matchdays[date]||'') + '</span><span class="day-count">' + ms.length + ' match' + (ms.length>1?'es':'') + '</span></div>' + ms.map(renderCard).join('') + '</div>';
+  });
+  return html;
+}
+
+// ─── RENDER BY GROUP ─────────────────────────────────────────────────────────
+function renderByGroup(grp) {
+  const gm = matches.filter(m => m.group === grp).sort((a,b) => a.wibDate.localeCompare(b.wibDate)||a.wibTime.localeCompare(b.wibTime));
+  const md1=gm.slice(0,2), md2=gm.slice(2,4), md3=gm.slice(4);
+  let html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-family:Bebas Neue,sans-serif;font-size:20px;letter-spacing:1px">Group ' + grp + '</span><span style="font-size:10px;color:var(--muted)">' + gm.filter(m=>m.status==='completed').length + '/' + gm.length + ' played</span></div>';
+  if (md1.length) html += '<div class="section-divider">Matchday 1</div>' + md1.map(renderCard).join('');
+  if (md2.length) html += '<div class="section-divider">Matchday 2</div>' + md2.map(renderCard).join('');
+  if (md3.length) html += '<div class="section-divider">Matchday 3</div>' + md3.map(renderCard).join('');
+  return html;
+}
+
+// ─── RENDER STANDINGS ─────────────────────────────────────────────────────────
+function renderStandings() {
+  const groups = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+  let html = '<div class="group-tabs-standing" id="stGrpTabs">';
+  ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(function(g){
+    html += '<button class="g-tab' + (g===currentGroup?' active':'') + '" data-sg="' + g + '">' + g + '</button>';
+  });
+  html += '</div>';
+  const rows = standingsData[currentGroup] || [];
+  html += '<div class="standings-legend"><span><span class="legend-sq" style="background:rgba(46,204,113,.3)"></span>→ Round of 32</span><span><span class="legend-sq" style="background:rgba(52,152,219,.2)"></span>→ Best 3rd place</span></div>';
+  html += '<table class="standings-table"><thead><tr><th>#</th><th>Team</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>';
+  rows.forEach((t, i) => {
+    const rowCls = i < 2 ? 'qualify-direct' : i === 2 ? 'qualify-3rd' : '';
+    const badge  = i < 2 ? '<span class="qualify-badge q-direct">R32</span>' : i === 2 ? '<span class="qualify-badge q-3rd">3rd?</span>' : '<span class="qualify-badge q-out">Out</span>';
+    html += '<tr class="' + rowCls + '"><td style="color:var(--muted);font-size:11px">' + (i+1) + '</td><td><div class="team-cell"><span class="team-flag-sm">' + t.flag + '</span><span class="team-name-sm">' + t.team + '</span>' + badge + '</div></td><td>' + t.gp + '</td><td>' + t.w + '</td><td>' + t.d + '</td><td>' + t.l + '</td><td>' + t.gf + '</td><td>' + t.ga + '</td><td>' + (t.gd>0?'+':'') + t.gd + '</td><td style="font-weight:700;color:var(--accent)">' + t.pts + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  html += '<div style="font-size:10px;color:var(--muted);padding:8px 0;line-height:1.6"><b>Next round format:</b> Top 2 from each group qualify directly to the Round of 32. The best 8 third-placed teams across all 12 groups also advance — marked with <span class="qualify-badge q-3rd" style="font-size:9px">3rd?</span></div>';
+  return html;
+}
+
+function setStandingGroup(g) {
+  currentGroup = g;
+  document.getElementById('mainContent').innerHTML = renderStandings();
+  document.querySelectorAll('#stGrpTabs .g-tab').forEach(b => b.classList.toggle('active', b.getAttribute('data-sg')===g));
+}
+
+// ─── RENDER SCORERS ───────────────────────────────────────────────────────────
+function renderScorers() {
+  const sorted = [...topScorers].sort((a,b) => b.goals-a.goals || b.assists-a.assists);
+  let html = '<div class="lb-section-title">🥇 Golden Boot Race</div>';
+  sorted.forEach((p, i) => {
+    const rankCls = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    html += '<div class="leaderboard-card"><div class="lb-rank ' + rankCls + '">' + (i+1) + '</div><div style="font-size:20px">' + p.flag + '</div><div class="lb-info"><div class="lb-name">' + p.name + '</div><div class="lb-team">' + p.team + (p.assists ? ' · ' + p.assists + ' ast' : '') + '</div></div><div><div class="lb-count">' + p.goals + '</div><div class="lb-count-label">Goals</div></div></div>';
+  });
+  return html;
+}
+
+// ─── RENDER ASSISTS ───────────────────────────────────────────────────────────
+function renderAssists() {
+  const sorted = [...topAssists].sort((a,b) => b.assists-a.assists || b.goals-a.goals);
+  let html = '<div class="lb-section-title">🎯 Assist Leaderboard</div>';
+  sorted.forEach((p, i) => {
+    const rankCls = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    html += '<div class="leaderboard-card"><div class="lb-rank ' + rankCls + '">' + (i+1) + '</div><div style="font-size:20px">' + p.flag + '</div><div class="lb-info"><div class="lb-name">' + p.name + '</div><div class="lb-team">' + p.team + (p.goals ? ' · ' + p.goals + ' gls' : '') + '</div></div><div><div class="lb-count">' + p.assists + '</div><div class="lb-count-label">Assists</div></div></div>';
+  });
+  return html;
+}
+
+// ─── MAIN RENDER ─────────────────────────────────────────────────────────────
+function render() {
+  const main = document.getElementById('mainContent');
+  const subBar = document.getElementById('subFiltersBar');
+  if (currentTab === 'schedule') {
+    subBar.style.display = 'flex';
+    let list = matches;
+    if (currentView === 'completed') list = matches.filter(m => m.status==='completed');
+    if (currentView === 'upcoming')  list = matches.filter(m => m.status==='upcoming'||m.status==='live');
+    if (currentView === 'group') { main.innerHTML = renderByGroup(currentGroup); }
+    else { main.innerHTML = renderByDate(list); }
+    // restore open details
+    openDetails.forEach(id => {
+      const p = document.getElementById('dp-'+id);
+      const a = document.getElementById('ea-'+id);
+      if (p) { p.classList.add('open'); if(a) a.classList.add('open'); }
+    });
+  } else if (currentTab === 'standings') {
+    subBar.style.display = 'none';
+    main.innerHTML = renderStandings();
+    var stTabs = document.getElementById('stGrpTabs');
+    if (stTabs) stTabs.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-sg]');
+      if(b) setStandingGroup(b.getAttribute('data-sg'));
+    });
+  } else if (currentTab === 'scorers') {
+    subBar.style.display = 'none';
+    main.innerHTML = renderScorers();
+  } else if (currentTab === 'assists') {
+    subBar.style.display = 'none';
+    main.innerHTML = renderAssists();
+  } else if (currentTab === 'bracket') {
+    subBar.style.display = 'none';
+    main.innerHTML = renderBracket();
+  }
+}
+
+function setTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setView(view, btn) {
+  currentView = view;
+  // handle group sub-tabs
+  const existing = document.getElementById('groupSubTabs');
+  if (view === 'group') {
+    if (!existing) {
+      const div = document.createElement('div');
+      div.id = 'groupSubTabs';
+      div.className = 'sub-filters';
+      div.style.borderTop = '1px solid var(--border)';
+      var glist = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+    glist.forEach(function(g){
+      var btn = document.createElement('button');
+      btn.className = 'filter-btn' + (g===currentGroup?' active':'');
+      btn.textContent = g;
+      btn.setAttribute('data-grp', g);
+      div.appendChild(btn);
+    });
+    div.addEventListener('click', function(e){
+      var b = e.target.closest('button[data-grp]');
+      if(b) setGroup(b.getAttribute('data-grp'), b);
+    });
+      document.getElementById('subFiltersBar').after(div);
+    } else { existing.style.display='flex'; }
+  } else {
+    if (existing) existing.style.display='none';
+  }
+  document.querySelectorAll('#subFiltersBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setGroup(g, btn) {
+  currentGroup = g;
+  document.querySelectorAll('#groupSubTabs .filter-btn').forEach(b => b.classList.toggle('active', b.textContent.trim()===g));
+  render();
+}
+
+// ─── BRACKET DATA (all times WIB = UTC+7) ────────────────────────────────────
+// Round of 32 official matchups from FIFA
+// 3rd place slots: determined after all group stage matches finish Jun 28
+const bracketData = {
+  r32: [
+    { id:'M73', home:'2A', away:'2B',       wibDate:'2026-06-29', wibTime:'02:00', venue:'Vancouver',          status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M74', home:'1E', away:'3ABCDF',   wibDate:'2026-06-29', wibTime:'07:30', venue:'East Rutherford',    status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M75', home:'1C', away:'2F',       wibDate:'2026-06-30', wibTime:'00:00', venue:'Houston',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M76', home:'1F', away:'2C',       wibDate:'2026-06-30', wibTime:'04:00', venue:'Los Angeles',        status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M77', home:'1I', away:'3CDFGH',   wibDate:'2026-06-30', wibTime:'08:00', venue:'Arlington (Dallas)', status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M78', home:'2E', away:'2I',       wibDate:'2026-07-01', wibTime:'00:00', venue:'Monterrey',          status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M79', home:'1A', away:'3CEFHI',   wibDate:'2026-07-01', wibTime:'04:00', venue:'Mexico City',        status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M80', home:'1G', away:'3AEHIJ',   wibDate:'2026-07-01', wibTime:'08:00', venue:'Seattle',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M81', home:'1L', away:'3EHIJK',   wibDate:'2026-07-01', wibTime:'23:00', venue:'Atlanta',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M82', home:'1D', away:'3BEFIJ',   wibDate:'2026-07-02', wibTime:'07:00', venue:'Kansas City',        status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M83', home:'1H', away:'2J',       wibDate:'2026-07-03', wibTime:'02:00', venue:'Miami',              status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M84', home:'2K', away:'2L',       wibDate:'2026-07-03', wibTime:'06:00', venue:'Arlington (Dallas)', status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M85', home:'1B', away:'3EFGIJ',   wibDate:'2026-07-03', wibTime:'10:00', venue:'Toronto',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M86', home:'1J', away:'2H',       wibDate:'2026-07-04', wibTime:'05:00', venue:'Houston',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M87', home:'2D', away:'2G',       wibDate:'2026-07-04', wibTime:'09:00', venue:'Los Angeles',        status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M88', home:'1K', away:'3DEIJL',   wibDate:'2026-07-05', wibTime:'08:30', venue:'Foxborough',         status:'upcoming', homeScore:null, awayScore:null },
+  ],
+  r16: [
+    { id:'M89', home:'W74', away:'W77',     wibDate:'2026-07-05', wibTime:'04:00', venue:'East Rutherford',    status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M90', home:'W73', away:'W75',     wibDate:'2026-07-05', wibTime:'08:00', venue:'Atlanta',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M91', home:'W76', away:'W81',     wibDate:'2026-07-06', wibTime:'02:00', venue:'Seattle',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M92', home:'W78', away:'W80',     wibDate:'2026-07-06', wibTime:'06:00', venue:'Kansas City',        status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M93', home:'W82', away:'W85',     wibDate:'2026-07-07', wibTime:'02:00', venue:'Los Angeles',        status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M94', home:'W79', away:'W83',     wibDate:'2026-07-07', wibTime:'06:00', venue:'Houston',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M95', home:'W84', away:'W87',     wibDate:'2026-07-08', wibTime:'02:00', venue:'Arlington (Dallas)', status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M96', home:'W86', away:'W88',     wibDate:'2026-07-08', wibTime:'06:00', venue:'Miami',              status:'upcoming', homeScore:null, awayScore:null },
+  ],
+  qf: [
+    { id:'M97', home:'W89', away:'W90',     wibDate:'2026-07-10', wibTime:'04:00', venue:'Vancouver',          status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M98', home:'W91', away:'W92',     wibDate:'2026-07-10', wibTime:'08:00', venue:'East Rutherford',    status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M99', home:'W93', away:'W94',     wibDate:'2026-07-11', wibTime:'04:00', venue:'Houston',            status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M100',home:'W95', away:'W96',     wibDate:'2026-07-12', wibTime:'04:00', venue:'Los Angeles',        status:'upcoming', homeScore:null, awayScore:null },
+  ],
+  sf: [
+    { id:'M101',home:'W97', away:'W98',     wibDate:'2026-07-15', wibTime:'04:00', venue:'Arlington (Dallas)', status:'upcoming', homeScore:null, awayScore:null },
+    { id:'M102',home:'W99', away:'W100',    wibDate:'2026-07-16', wibTime:'04:00', venue:'Atlanta',            status:'upcoming', homeScore:null, awayScore:null },
+  ],
+  tp: [
+    { id:'M103',home:'L101',away:'L102',    wibDate:'2026-07-19', wibTime:'04:00', venue:'Miami',              status:'upcoming', homeScore:null, awayScore:null },
+  ],
+  final: [
+    { id:'M104',home:'W101',away:'W102',    wibDate:'2026-07-20', wibTime:'04:00', venue:'East Rutherford',    status:'upcoming', homeScore:null, awayScore:null },
+  ],
+};
+
+const stageNames = {
+  r32:   { label:'Round of 32',    dates:'Jun 28 – Jul 5' },
+  r16:   { label:'Round of 16',    dates:'Jul 5 – 8' },
+  qf:    { label:'Quarter-Finals', dates:'Jul 10 – 12' },
+  sf:    { label:'Semi-Finals',    dates:'Jul 15 – 16' },
+  tp:    { label:'3rd Place',      dates:'Jul 19' },
+  final: { label:'🏆 Final',       dates:'Jul 20' },
+};
+
+// Labels for 3rd-place slots
+const thirdSlotDesc = {
+  '3ABCDF': 'Best 3rd: A/B/C/D/F',
+  '3CDFGH': 'Best 3rd: C/D/F/G/H',
+  '3CEFHI': 'Best 3rd: C/E/F/H/I',
+  '3EHIJK': 'Best 3rd: E/H/I/J/K',
+  '3BEFIJ': 'Best 3rd: B/E/F/I/J',
+  '3AEHIJ': 'Best 3rd: A/E/H/I/J',
+  '3EFGIJ': 'Best 3rd: E/F/G/I/J',
+  '3DEIJL': 'Best 3rd: D/E/I/J/L',
+};
+
+function slotLabel(slot) {
+  if (thirdSlotDesc[slot]) return thirdSlotDesc[slot];
+  if (slot.startsWith("W")) return "Winner M" + slot.slice(1);
+  if (slot.startsWith("L")) return "Loser M" + slot.slice(1);
+  if (slot.startsWith("1")) return "1st Group " + slot.slice(1);
+  if (slot.startsWith("2")) return "2nd Group " + slot.slice(1);
+  return slot;
+}
+
+function renderBracketMatch(m) {
+  var isComp = m.status === 'completed';
+  var wibDay = m.wibDate ? m.wibDate.slice(5).replace('-','/') : '';
+  var homeWin = isComp && m.homeScore > m.awayScore;
+  var awayWin = isComp && m.awayScore > m.homeScore;
+  var homeLabel = m.homeTeam ? m.homeTeam : slotLabel(m.home);
+  var awayLabel = m.awayTeam ? m.awayTeam : slotLabel(m.away);
+  var homeFlag  = m.homeFlag || '';
+  var awayFlag  = m.awayFlag || '';
+  var isTBD = !m.homeTeam;
+  var homeNC = isTBD ? 'bracket-team-name tbd' : (homeWin ? 'bracket-team-name winner' : 'bracket-team-name');
+  var awayNC = isTBD ? 'bracket-team-name tbd' : (awayWin ? 'bracket-team-name winner' : 'bracket-team-name');
+  var homeSC = homeWin ? 'bracket-team-score winner' : 'bracket-team-score';
+  var awaySC = awayWin ? 'bracket-team-score winner' : 'bracket-team-score';
+  var scoreH = isComp ? ('<span class="' + homeSC + '">' + m.homeScore + '</span>') : '';
+  var scoreA = isComp ? ('<span class="' + awaySC + '">' + m.awayScore + '</span>') : '';
+  var html = '';
+  html += '<div class="bracket-match ' + m.status + '">';
+  html += '<div class="bracket-match-header">';
+  html += '<span class="bracket-match-num">' + m.id + '</span>';
+  html += '<span>' + wibDay + ' &middot; ' + m.wibTime + ' WIB</span>';
+  html += '</div>';
+  html += '<div class="bracket-teams">';
+  html += '<div class="bracket-team">';
+  html += '<span class="bracket-team-flag">' + homeFlag + '</span>';
+  html += '<span class="' + homeNC + '">' + homeLabel + '</span>';
+  html += scoreH;
+  html += '</div>';
+  html += '<div class="bracket-team">';
+  html += '<span class="bracket-team-flag">' + awayFlag + '</span>';
+  html += '<span class="' + awayNC + '">' + awayLabel + '</span>';
+  html += scoreA;
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="bracket-info"><span>&#128205; ' + m.venue + '</span></div>';
+  html += '</div>';
+  return html;
+}
+
+function renderBracket() {
+  var html = '<div class="bracket-note"><b>🏆 How teams qualify:</b> Top 2 from each of 12 groups (24 teams) + best 8 third-placed teams = 32 teams in the Round of 32. Third-place matchups only confirmed after Jun 28.</div>';
+  var order = ['r32','r16','qf','sf','tp','final'];
+  order.forEach(function(stage) {
+    var info = stageNames[stage];
+    html += '<div class="bracket-stage">';
+    html += '<div class="bracket-stage-title">' + info.label + '<span class="bracket-stage-dates">' + info.dates + '</span></div>';
+    bracketData[stage].forEach(function(m) { html += renderBracketMatch(m); });
+    html += '</div>';
+  });
+  return html;
+}
+
+
+// ─── UPDATE MAIN RENDER ───────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTopBtn').classList.toggle('visible', window.scrollY > 300);
+});
+
+render();
+</script>
+</body>
+</html>
